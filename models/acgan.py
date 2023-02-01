@@ -30,7 +30,7 @@ class ACGANGenerator(nn.Module):
         self.latent_dims = latent_dims
 
         # first linear layer
-        self.fc1 = nn.Linear(110, 384)
+        self.fc1 = nn.Linear(latent_dims, 384)
         # Transposed Convolution 2
         self.conv1= nn.Sequential(
             nn.ConvTranspose2d(384, 192, 4, 1, 0, bias=False),
@@ -59,10 +59,10 @@ class ACGANGenerator(nn.Module):
         input = input.view(-1, self.latent_dims)
         fc1 = self.fc1(input)
         fc1 = fc1.view(-1, 384, 1, 1)
-        tconv2 = self.tconv2(fc1)
-        tconv3 = self.tconv3(tconv2)
-        tconv4 = self.tconv4(tconv3)
-        tconv5 = self.tconv5(tconv4)
+        tconv2 = self.conv1(fc1)
+        tconv3 = self.conv2(tconv2)
+        tconv4 = self.conv3(tconv3)
+        tconv5 = self.conv4(tconv4)
         output = tconv5
         return output
 
@@ -117,7 +117,7 @@ class ACGANDiscriminator(nn.Module):
         # aux-classifier fc
         self.fc_aux = nn.Linear(4*4*512, num_classes)
         # softmax and sigmoid
-        self.softmax = nn.Softmax()
+        self.softmax = nn.Softmax(dim=1)
         self.sigmoid = nn.Sigmoid()
 
     def forward(self, input):
