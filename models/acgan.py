@@ -1,4 +1,4 @@
-from utils import *
+from notebooks.utils import *
 import os 
 import tensorflow as tf
 import torch
@@ -136,7 +136,7 @@ class ACGANDiscriminator(nn.Module):
         return realfake, classes
 
 if __name__ == "__main__":
-    from utils import *
+    from notebooks.utils import *
 
     data_dir = './data'
 

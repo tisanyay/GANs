@@ -125,7 +125,7 @@ def output_imgs(basedir, gen, epoch, disc_loss, gen_loss, fid, labels=False):
         random_labels = torch.randint(0, 10, (rows*columns, )).to(device)
 
     noise = torch.randn(LATENT_DIM*rows*columns).to(device)
-    fake_imgs = gen(noise.reshape(rows*columns, LATENT_DIM), random_labels)
+    fake_imgs = gen(noise.reshape(rows*columns, LATENT_DIM, 1, 1))
     fig, axs = plt.subplots(rows, columns, figsize=(20, 30))
     for i in range(rows*columns):
         ax = axs[i//columns, i%columns]
@@ -220,3 +220,12 @@ def compute_acc(preds, labels):
     correct = preds_.eq(labels.data).cpu().sum()
     acc = float(correct) / float(len(labels.data)) * 100.0
     return acc
+
+# custom weights initialization called on netG and netD
+def weights_init(m):
+    classname = m.__class__.__name__
+    if classname.find('Conv') != -1:
+        m.weight.data.normal_(0.0, 0.02)
+    elif classname.find('BatchNorm') != -1:
+        m.weight.data.normal_(1.0, 0.02)
+        m.bias.data.fill_(0)
